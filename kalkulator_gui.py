@@ -51,8 +51,16 @@ class Application():
         self.outputFrameBd = tkinter.Frame(master, bg='grey', padx=1, pady=1)
         self.outputFrameBd.place(x=20, y=280)
         self.outputFrame1 = ttk.Treeview(self.outputFrameBd)
-        # self.clearOutputFrame()
         # --------------------------------------------------------------------
+
+        self.languageVar = tkinter.StringVar()
+        self.languageBox = ttk.Combobox(master, textvariable=self.languageVar, values=('EN', 'PL'), width=3,
+                                        state='readonly')
+        self.languageBox.set("EN")
+        self.languageBox.place(relx=0.92, rely=0.02)
+        self.languageBox.bind('<<ComboboxSelected>>', self.callbackComboBox)
+        self.languageDict = {'PL': ['Zatwierdź', 'Ilość Krokwi', 'Dystans "d" [cm]', "Znaczenie [cm]"],
+                             "EN": ['Submit', "Rafters needed", 'Distance "d" [cm]', 'Marking [cm]']}
 
 
 
@@ -114,6 +122,14 @@ class Application():
             else:
                 self.outputFrame1.insert(parent='', index='end', values=(key, dist, draw))
             counter += 1
+
+    def callbackComboBox(self, event):
+        lang = self.languageBox.get()
+        self.master.focus()
+        self.submitBtn['text'] = self.languageDict[lang][0]
+        self.outputFrame1.heading('rafters', text=self.languageDict[lang][1])
+        self.outputFrame1.heading('distance', text=self.languageDict[lang][2])
+        self.outputFrame1.heading('marking', text=self.languageDict[lang][3])
 
 
 
