@@ -48,11 +48,12 @@ class Application():
                                         command=self.submit1)
         self.submitBtn.grid(row=4, column=0, columnspan=3, sticky='ew', pady=(10,0), padx=20)
 
+        # output Frame -------------------------------------------------------
         self.outputFrameBd = tkinter.Frame(master, bg='grey', padx=1, pady=1)
-        self.outputFrameBd.place(x=20, y=270)
-        self.outputFrame1 = tkinter.Frame(self.outputFrameBd, width=50, height=50)
-        self.outputFrame1.pack(fill='both', expand=True)
-        self.clearOutputFrame()
+        self.outputFrameBd.place(x=20, y=280)
+        self.outputFrame1 = tkinter.Frame(self.outputFrameBd)
+        # self.clearOutputFrame()
+        # --------------------------------------------------------------------
 
 
 
@@ -73,13 +74,35 @@ class Application():
         self.outputFrame1 = tkinter.Frame(self.outputFrameBd)
         self.outputFrame1.pack(fill='both', expand=True)
         tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Rafters needed', padx=4).grid(row=0, column=0)
-        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Distance \'d\'', bg='lightgrey', padx=4).grid(row=0, column=1)
-        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Drawing', padx=4).grid(row=0, column=2)
+        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Distance \'d\' [cm]', bg='lightgrey', padx=4).grid(row=0, column=1)
+        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Drawing [cm]', padx=4).grid(row=0, column=2)
 
     def fillData(self):
         base_row = 1
+        if len(self.outcome.wymiary.items()) <= 14:
+            pass
+        else:
+            pass
         for key, value in self.outcome.wymiary.items():
             print('key: ', key, 'value:', value)
+            dist = round(value[0], 2)
+            draw = round(value[1], 2)
+
+            if base_row % 2 != 0:
+                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=key, padx=4,
+                              bg='lightgrey').grid(row=base_row, column=0, sticky='ew')
+                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=dist,
+                              padx=4).grid(row=base_row, column=1, sticky='ew')
+                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=draw, padx=4,
+                              bg='lightgrey').grid(row=base_row, column=2, sticky='ew')
+            else:
+                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=key,
+                              padx=4).grid(row=base_row, column=0, sticky='ew')
+                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=dist,
+                              padx=4, bg='lightgrey').grid(row=base_row, column=1, sticky='ew')
+                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=draw,
+                              padx=4).grid(row=base_row, column=2, sticky='ew')
+            base_row += 1
 
 
 
