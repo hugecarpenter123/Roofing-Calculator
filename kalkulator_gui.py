@@ -1,6 +1,6 @@
 import tkinter
 from PIL import ImageTk, Image
-from tkinter import font
+from tkinter import ttk
 from obliczenia_dekarskie import RozmieszczenieKrokwi
 
 
@@ -14,8 +14,7 @@ class Application():
         self.label1.place(x=0, y=0, relwidth=1, relheight=1)
         self.bd = tkinter.Frame(master ,bg='grey', padx=1, pady=1)
         self.bd.place(x=20, y=20)
-        # self.inputFrame1 = tkinter.Frame(master, height=20, width=20, padx=10, pady=10)
-        # self.inputFrame1.place(x=20, y=20)
+
         self.inputFrame1 = tkinter.Frame(self.bd, height=20, width=20, padx=10, pady=10)
         self.inputFrame1.pack(fill='both')
 
@@ -51,7 +50,7 @@ class Application():
         # output Frame -------------------------------------------------------
         self.outputFrameBd = tkinter.Frame(master, bg='grey', padx=1, pady=1)
         self.outputFrameBd.place(x=20, y=280)
-        self.outputFrame1 = tkinter.Frame(self.outputFrameBd)
+        self.outputFrame1 = ttk.Treeview(self.outputFrameBd)
         # self.clearOutputFrame()
         # --------------------------------------------------------------------
 
@@ -71,39 +70,50 @@ class Application():
 
     def clearOutputFrame(self):
         self.outputFrame1.destroy()
-        self.outputFrame1 = tkinter.Frame(self.outputFrameBd)
-        self.outputFrame1.pack(fill='both', expand=True)
-        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Rafters needed', padx=4).grid(row=0, column=0)
-        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Distance \'d\' [cm]', bg='lightgrey', padx=4).grid(row=0, column=1)
-        tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text='Drawing [cm]', padx=4).grid(row=0, column=2)
+
+        rows_num = len(self.outcome.wymiary)
+        height = rows_num if rows_num <= 10 else 10
+
+        self.outputFrame1 = ttk.Treeview(self.outputFrameBd, height=height)
+        self.outputFrame1['columns'] = ('rafters', 'distance', 'marking')
+        self.outputFrame1.column("#0", width=0, stretch='no')
+        self.outputFrame1.column("rafters", anchor='center', width=100)
+        self.outputFrame1.column("distance", anchor='center', width=110)
+        self.outputFrame1.column("marking", anchor='center', width=90)
+
+        self.outputFrame1.heading("#0", text="", anchor='center')
+        self.outputFrame1.heading("rafters", text="Rafters needed", anchor='center')
+        self.outputFrame1.heading("distance", text='Distance "d" [cm]', anchor='center')
+        self.outputFrame1.heading("marking", text="Marking [cm]", anchor='center')
+        self.outputFrame1.pack(fill='both')
+
+        # color configuration ------
+        self.outputFrame1.tag_configure('evenrow', background='#e9e9e9')
+        style = ttk.Style()
+        style.map('Treeview', background=[('selected', '#008ce2')])
+        # --------------------------
+
+        # scrollbar ----------------
+        if rows_num > 10:
+            scroll = tkinter.Scrollbar(self.outputFrameBd)
+            scroll.config(command=self.outputFrame1.yview)
+            # position hardcoded...
+            scroll.place(relx=0.942, rely=0.11, relheight=0.88)
+            self.outputFrame1['yscrollcommand'] = scroll.set
+        # --------------------------
+        # calling function which fills the rows from self.outcome
+        self.fillData()
 
     def fillData(self):
-        base_row = 1
-        if len(self.outcome.wymiary.items()) <= 14:
-            pass
-        else:
-            pass
+        counter = 0
         for key, value in self.outcome.wymiary.items():
-            print('key: ', key, 'value:', value)
             dist = round(value[0], 2)
             draw = round(value[1], 2)
-
-            if base_row % 2 != 0:
-                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=key, padx=4,
-                              bg='lightgrey').grid(row=base_row, column=0, sticky='ew')
-                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=dist,
-                              padx=4).grid(row=base_row, column=1, sticky='ew')
-                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=draw, padx=4,
-                              bg='lightgrey').grid(row=base_row, column=2, sticky='ew')
+            if counter % 2 == 0:
+                self.outputFrame1.insert(parent='', index='end', values=(key, dist, draw), tags = ('evenrow',))
             else:
-                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=key,
-                              padx=4).grid(row=base_row, column=0, sticky='ew')
-                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=dist,
-                              padx=4, bg='lightgrey').grid(row=base_row, column=1, sticky='ew')
-                tkinter.Label(self.outputFrame1, font=('Arial', 10, 'normal'), text=draw,
-                              padx=4).grid(row=base_row, column=2, sticky='ew')
-            base_row += 1
-
+                self.outputFrame1.insert(parent='', index='end', values=(key, dist, draw))
+            counter += 1
 
 
 
