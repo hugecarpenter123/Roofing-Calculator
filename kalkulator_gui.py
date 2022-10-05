@@ -50,7 +50,8 @@ class Application():
         # output Frame -------------------------------------------------------
         self.outputFrameBd = tkinter.Frame(master, bg='grey', padx=1, pady=1)
         self.outputFrameBd.place(x=20, y=280)
-        self.outputFrame1 = ttk.Treeview(self.outputFrameBd)
+        # self.outputFrame1 = ttk.Treeview(self.outputFrameBd)
+        self.outputFrame1 = None
         # --------------------------------------------------------------------
 
         self.languageVar = tkinter.StringVar()
@@ -62,23 +63,32 @@ class Application():
         self.languageDict = {'PL': ['Zatwierdź', 'Ilość Krokwi', 'Dystans "d" [cm]', "Znaczenie [cm]"],
                              "EN": ['Submit', "Rafters needed", 'Distance "d" [cm]', 'Marking [cm]']}
 
+        master.bind('<Key>', self.keyCallback)
+
 
 
     def submit1(self):
-        # self.d_calkowita, self.s_krokwi, self.o_przedzial_dolny, self.o_przedzial_gorny
-        args = [
-            float(self.p_entry.get()),
-            float(self.w_entry.get()),
-            float(self.d_min_entry.get()),
-            float(self.d_max_entry.get()),
-        ]
-        self.outcome = RozmieszczenieKrokwi(args)
+        try:
+            args = [
+                float(self.p_entry.get()),
+                float(self.w_entry.get()),
+                float(self.d_min_entry.get()),
+                float(self.d_max_entry.get()),
+            ]
+            self.outcome = RozmieszczenieKrokwi(args)
+        except:
+            return
+
         self.clearOutputFrame()
         self.fillData()
 
     def clearOutputFrame(self):
-        self.outputFrame1.destroy()
+        # if 'self.outputFrame1' is already on the screan, destroy and create new one
+        # otherwise no need to destroy
+        if self.outputFrame1:
+            self.outputFrame1.destroy()
 
+        lang = self.languageBox.get()
         rows_num = len(self.outcome.wymiary)
         height = rows_num if rows_num <= 10 else 10
 
@@ -90,9 +100,9 @@ class Application():
         self.outputFrame1.column("marking", anchor='center', width=90)
 
         self.outputFrame1.heading("#0", text="", anchor='center')
-        self.outputFrame1.heading("rafters", text="Rafters needed", anchor='center')
-        self.outputFrame1.heading("distance", text='Distance "d" [cm]', anchor='center')
-        self.outputFrame1.heading("marking", text="Marking [cm]", anchor='center')
+        self.outputFrame1.heading("rafters", text=self.languageDict[lang][1], anchor='center')
+        self.outputFrame1.heading("distance", text=self.languageDict[lang][2], anchor='center')
+        self.outputFrame1.heading("marking", text=self.languageDict[lang][3], anchor='center')
         self.outputFrame1.pack(fill='both')
 
         # color configuration ------
@@ -127,11 +137,16 @@ class Application():
         lang = self.languageBox.get()
         self.master.focus()
         self.submitBtn['text'] = self.languageDict[lang][0]
-        self.outputFrame1.heading('rafters', text=self.languageDict[lang][1])
-        self.outputFrame1.heading('distance', text=self.languageDict[lang][2])
-        self.outputFrame1.heading('marking', text=self.languageDict[lang][3])
+        
+        # if outputFrame1 already exists, change its headings
+        if self.outputFrame1:
+            self.outputFrame1.heading('rafters', text=self.languageDict[lang][1])
+            self.outputFrame1.heading('distance', text=self.languageDict[lang][2])
+            self.outputFrame1.heading('marking', text=self.languageDict[lang][3])
 
-
+    def keyCallback(self, event):
+        if event.keysym == 'Return':
+            self.submit1()
 
 def main():
     root = tkinter.Tk()
