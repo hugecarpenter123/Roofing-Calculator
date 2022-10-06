@@ -4,7 +4,6 @@ rafters (or similiar) within user-specified intervals and thus solves the proble
 Application allows to choose among all possible solutions as well as to pick favoured language. User can also
 read the details contained in a legend (which can be accessed through the menu)</p>
 
-<p>File: "obliczenia_dekarskie.py" alone can be used as ready console application.</p>
 <h2 style="text-align: center">Used tools</h2>
 <ul>
   <li>Python</li>
