@@ -4,6 +4,10 @@ rafters (or similiar) within user-specified intervals and thus solves the proble
 Application allows to choose among all possible solutions as well as to pick favoured language. User can also
 read the details contained in a legend (which can be accessed through the menu)</p>
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=XSC-iBdcuxU
+" target="_blank"><img src="http://img.youtube.com/vi/XSC-iBdcuxU/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
 <h2 style="text-align: center">Used tools</h2>
 <ul>
   <li>Python</li>
