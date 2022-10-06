@@ -217,7 +217,7 @@ class Application():
 def main():
     root = tkinter.Tk()
     root.title('Roofing calculator')
-    root.geometry('900x549')
+    root.geometry('900x529')
     root.resizable(False, False)
     root.configure(padx=5, pady=5, bg='white')
     img = tkinter.PhotoImage(file='images/roof_icon.png')
