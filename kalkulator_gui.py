@@ -25,7 +25,7 @@ class Application():
 
         self.file_menu.add_cascade(label='Language', menu=self.lang_sub_menu)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label='Exit', command=None)
+        self.file_menu.add_command(label='Exit', command=self.exit)
 
         self.help_menu = tkinter.Menu(self.menu_panel, tearoff=0)
         self.menu_panel.add_cascade(
@@ -184,7 +184,6 @@ class Application():
             self.submit1()
 
     def showLegend(self):
-
         lang = self.languageVar.get()
         # sc - shortcut to a list of all needed translations
         sc = self.languageDict[lang]
@@ -214,6 +213,9 @@ class Application():
         p_label.grid(row=1, column=1, sticky='ew')
         w_label.grid(row=2, column=1, sticky='ew')
         marking_label.grid(row=3, column=1, sticky='ew')
+
+    def exit(self):
+        self.master.destroy()
 
 
 
