@@ -7,6 +7,35 @@ from obliczenia_dekarskie import RozmieszczenieKrokwi
 class Application():
     def __init__(self, master):
         self.master = master
+        # ----------- menu ---------------
+        self.menu_panel = tkinter.Menu(master)
+        self.master.config(menu=self.menu_panel)
+        self.file_menu = tkinter.Menu(self.menu_panel, tearoff=0)
+
+        self.menu_panel.add_cascade(
+            label='File',
+            menu=self.file_menu
+        )
+
+        # Change of value in combobox calls the Function, which sets proper language in widgets, but -
+        # manual setting of ComboBox's value doesn't trigger the callback, so call the callback function additionaly
+        self.lang_sub_menu = tkinter.Menu(self.file_menu, tearoff=0)
+        self.lang_sub_menu.add_command(label='English', command=lambda: (self.languageBox.set("EN"), self.callbackComboBox(None)))
+        self.lang_sub_menu.add_command(label='Polski', command=lambda: (self.languageBox.set("PL"), self.callbackComboBox(None)))
+
+        self.file_menu.add_cascade(label='Language', menu=self.lang_sub_menu)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label='Exit', command=None)
+
+        self.help_menu = tkinter.Menu(self.menu_panel, tearoff=0)
+        self.menu_panel.add_cascade(
+            label='Help',
+            menu=self.help_menu
+        )
+
+        self.help_menu.add_command(label='Legend', command=self.showLegend)
+
+        # ----------- end menu--------------
 
         self.img = Image.open("images/rozstaw_krokiew_resized.png")
         self.bg = ImageTk.PhotoImage(self.img)
@@ -22,21 +51,26 @@ class Application():
         self.p_label.grid(row=0, column=0, sticky='ew')
         self.p_entry = tkinter.Entry(self.inputFrame1, font=('Arial', 13, 'normal'), width=6)
         self.p_entry.grid(row=0, column=1)
+        self.p_entry.focus_set()
+        self.p_entry.insert(0,700)
 
         self.w_label = tkinter.Label(self.inputFrame1, font=('Arial', 15, 'normal'), text='w', anchor='w')
         self.w_label.grid(row=1, column=0, sticky='ew')
         self.w_entry = tkinter.Entry(self.inputFrame1, font=('Arial', 13, 'normal'), width=6)
         self.w_entry.grid(row=1, column=1)
+        self.w_entry.insert(0, 7)
 
         self.d_min_label = tkinter.Label(self.inputFrame1, font=('Arial', 15, 'normal'), text='d-min', anchor='w',)
         self.d_min_label.grid(row=2, column=0, sticky='ew', padx=(0,30))
         self.d_min_entry = tkinter.Entry(self.inputFrame1, font=('Arial', 13, 'normal'), width=6, bg='white')
         self.d_min_entry.grid(row=2, column=1)
+        self.d_min_entry.insert(0, 30)
 
         self.d_max_label = tkinter.Label(self.inputFrame1, font=('Arial', 15, 'normal'), text='d-max', anchor='w')
         self.d_max_label.grid(row=3, column=0, sticky='ew')
         self.d_max_entry = tkinter.Entry(self.inputFrame1, font=('Arial', 13, 'normal'), width=6)
         self.d_max_entry.grid(row=3, column=1)
+        self.d_max_entry.insert(0, 70)
 
         #adding 'cm' label to all 4 rows with loop
         for i in range(4):
@@ -79,6 +113,7 @@ class Application():
         except:
             return
 
+        self.master.focus()
         self.clearOutputFrame()
         self.fillData()
 
@@ -119,8 +154,7 @@ class Application():
             scroll.place(relx=0.942, rely=0.11, relheight=0.88)
             self.outputFrame1['yscrollcommand'] = scroll.set
         # --------------------------
-        # calling function which fills the rows from self.outcome
-        self.fillData()
+
 
     def fillData(self):
         counter = 0
@@ -129,15 +163,18 @@ class Application():
             draw = round(value[1], 2)
             if counter % 2 == 0:
                 self.outputFrame1.insert(parent='', index='end', values=(key, dist, draw), tags = ('evenrow',))
+                print("evenrow")
             else:
                 self.outputFrame1.insert(parent='', index='end', values=(key, dist, draw))
+                print("oddrow")
+            print("counter:", counter)
             counter += 1
 
     def callbackComboBox(self, event):
         lang = self.languageBox.get()
         self.master.focus()
         self.submitBtn['text'] = self.languageDict[lang][0]
-        
+
         # if outputFrame1 already exists, change its headings
         if self.outputFrame1:
             self.outputFrame1.heading('rafters', text=self.languageDict[lang][1])
@@ -148,14 +185,43 @@ class Application():
         if event.keysym == 'Return':
             self.submit1()
 
+    def showLegend(self):
+        legendRoot = tkinter.Toplevel()
+        legendRoot.title('Legend')
+        legendRoot.configure(padx=4, pady=4)
+
+        d_label_title = tkinter.Label(legendRoot, text='Distance "d"', font=('Arial', 11), bd=1)
+        p_label_title = tkinter.Label(legendRoot, text='Distance "p"', font=('Arial', 11))
+        w_label_title = tkinter.Label(legendRoot, text='Distance "w"', font=('Arial', 11))
+        marking_title = tkinter.Label(legendRoot, text='Marking', font=('Arial', 11), anchor='w')
+
+        d_label_title.grid(row=0, column=0, sticky='ew', padx=(0,10))
+        p_label_title.grid(row=1, column=0, sticky='ew', padx=(0,10))
+        w_label_title.grid(row=2, column=0, sticky='ew', padx=(0,10))
+        marking_title.grid(row=3, column=0, sticky='new', padx=(0,10))
+
+        d_label = tkinter.Label(legendRoot, text="- distance between two rafters", anchor='w')
+        p_label = tkinter.Label(legendRoot, text="- overall length of top wall plate", anchor='w')
+        w_label = tkinter.Label(legendRoot, text="- width of the rafter", anchor='w')
+        marking_label = tkinter.Label(legendRoot,
+                                      text="- marking the place from the left side of the rafter to the next left side",
+                                      anchor='w', wraplength=250, justify='left')
+
+        d_label.grid(row=0, column=1, sticky='ew')
+        p_label.grid(row=1, column=1, sticky='ew')
+        w_label.grid(row=2, column=1, sticky='ew')
+        marking_label.grid(row=3, column=1, sticky='ew')
+
+
+
 def main():
     root = tkinter.Tk()
     root.title('Roofing calculator')
-    root.geometry('900x529')
+    root.geometry('900x549')
     root.resizable(False, False)
-    root['padx'] = 5
-    root['pady'] = 5
-    root['bg'] = 'white'
+    root.configure(padx=5, pady=5, bg='white')
+    img = tkinter.PhotoImage(file='images/roof_icon.png')
+    root.iconphoto(True, img)
 
     app = Application(root)
     root.mainloop()
